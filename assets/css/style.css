@@ -138,6 +138,12 @@ header {
 	font-size: 1.5rem;
 	margin-right: 10px;
 }
+.logo-image {
+	width: 100%;
+	height: 100%;
+	object-fit: contain; /* This ensures the image maintains its aspect ratio */
+	display: block;
+}
 
 .logo-text h1 {
 	font-size: 1.5rem;
@@ -164,6 +170,16 @@ nav ul li a {
 	font-weight: 500;
 	transition: color 0.3s;
 	position: relative;
+}
+
+/* Navigation Active State */
+nav ul li a.active {
+	color: var(--primary);
+	font-weight: 600;
+}
+
+nav ul li a.active::after {
+	width: 100%; /* Show the underline for active item */
 }
 
 nav ul li a:hover {
@@ -738,20 +754,42 @@ footer {
 	}
 }
 
+/* Mobile Menu Styles */
 @media (max-width: 768px) {
+	.logo {
+		gap: 12px;
+		margin-right: auto;
+	}
+
+	.logo-icon {
+		width: 50px; /* Smaller on mobile */
+		height: 50px;
+	}
+
+	.logo-text h1 {
+		font-size: 1.3rem;
+	}
+
+	.logo-text p {
+		font-size: 0.75rem;
+	}
+	/* Hide desktop navigation by default on mobile */
 	nav ul {
 		display: none;
 		flex-direction: column;
-		position: absolute;
-		top: 100%;
+		position: fixed;
+		top: 80px;
 		left: 0;
 		width: 100%;
+		height: calc(100vh - 80px);
 		background: white;
 		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 		padding: 20px 0;
 		z-index: 1000;
+		overflow-y: auto;
 	}
 
+	/* Show menu when it has the 'show' class */
 	nav ul.show {
 		display: flex;
 	}
@@ -764,15 +802,39 @@ footer {
 
 	nav ul li a {
 		display: block;
-		padding: 15px 20px;
+		padding: 18px 20px;
 		border-bottom: 1px solid #f0f0f0;
 		width: 100%;
+		font-size: 1.1rem;
+		text-decoration: none;
+		color: var(--dark);
+		transition: background-color 0.3s, color 0.3s;
+	}
+
+	nav ul li a:hover {
+		background-color: #f8f9fa;
+		color: var(--primary);
+	}
+
+	nav ul li a.active {
+		background-color: var(--primary);
+		color: white;
+	}
+
+	nav ul li a.active:hover {
+		background-color: var(--primary-dark);
+		color: white;
+	}
+
+	nav ul li a.active::after {
+		display: none; /* Hide underline on mobile for active state */
 	}
 
 	nav ul li:last-child a {
 		border-bottom: none;
 	}
 
+	/* Mobile menu button */
 	.mobile-menu {
 		display: block;
 		background: none;
@@ -780,17 +842,80 @@ footer {
 		color: var(--dark);
 		font-size: 1.5rem;
 		cursor: pointer;
-		padding: 5px;
-		margin-left: auto; /* This pushes the menu button to the right */
+		padding: 5px 10px;
+		margin-left: auto;
+		transition: color 0.3s;
 	}
 
-	/* Ensure the header layout stays intact */
+	.mobile-menu:hover {
+		color: var(--primary);
+	}
+
+	/* Ensure header layout stays intact */
 	.header-container {
-		position: relative; /* This ensures the mobile menu dropdown is positioned correctly */
+		position: relative;
+	}
+	.about-content {
+		flex-direction: column;
+		gap: 30px;
 	}
 
+	.about-text {
+		order: 2; /* Text comes after image on mobile */
+	}
+
+	.about-image {
+		order: 1; /* Image comes first on mobile */
+		width: 100%;
+		max-width: 400px;
+		margin: 0 auto;
+	}
+
+	.about-text h3 {
+		font-size: 1.5rem;
+		text-align: center;
+		margin-bottom: 15px;
+	}
+
+	.about-text p {
+		margin-bottom: 15px;
+		font-size: 0.95rem;
+	}
+
+	.about-text .btn {
+		width: 100%;
+		text-align: center;
+		margin-top: 10px;
+	}
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
 	.logo {
-		/* Logo stays on the left */
-		margin-right: auto;
+		gap: 10px;
+	}
+
+	.logo-icon {
+		width: 45px;
+		height: 45px;
+	}
+
+	.logo-text h1 {
+		font-size: 1.1rem;
+	}
+
+	.logo-text p {
+		font-size: 0.7rem;
+	}
+}
+
+/* Desktop styles - ensure nav is visible on larger screens */
+@media (min-width: 769px) {
+	nav ul {
+		display: flex !important; /* Force display on desktop */
+	}
+
+	.mobile-menu {
+		display: none !important; /* Hide menu button on desktop */
 	}
 }

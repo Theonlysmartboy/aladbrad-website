@@ -8,19 +8,104 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Quote Form submission
 	const quoteForm = document.getElementById("quoteForm");
 
-	if (mobileMenuBtn && nav) {
-		mobileMenuBtn.addEventListener("click", function () {
-			// Toggle mobile menu visibility
-			nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+	// Active menu item functionality
+	const sections = document.querySelectorAll("section[id]");
+	const navLinks = document.querySelectorAll("nav ul li a");
 
-			// Change icon based on menu state
-			const icon = this.querySelector("i");
-			if (nav.style.display === "flex") {
-				icon.classList.remove("fa-bars");
-				icon.classList.add("fa-times");
+	// Function to update active menu item
+	function updateActiveMenu() {
+		let current = "";
+		const scrollY = window.pageYOffset;
+
+		sections.forEach((section) => {
+			const sectionHeight = section.offsetHeight;
+			const sectionTop = section.offsetTop - 100; // Offset for header
+			const sectionId = section.getAttribute("id");
+
+			if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+				current = sectionId;
+			}
+		});
+
+		// Remove active class from all links
+		navLinks.forEach((link) => {
+			link.classList.remove("active");
+			if (link.getAttribute("href") === `#${current}`) {
+				link.classList.add("active");
+			}
+		});
+	}
+
+	// Update active menu on scroll
+	window.addEventListener("scroll", updateActiveMenu);
+
+	// Update active menu on click
+	navLinks.forEach((link) => {
+		link.addEventListener("click", function () {
+			// Remove active class from all links
+			navLinks.forEach((link) => link.classList.remove("active"));
+
+			// Add active class to clicked link
+			this.classList.add("active");
+
+			// Close mobile menu if open
+			if (window.innerWidth <= 768) {
+				const nav = document.querySelector("nav ul");
+				const mobileMenuBtn = document.querySelector(".mobile-menu");
+				const icon = mobileMenuBtn.querySelector("i");
+
+				nav.style.display = "none";
+				nav.classList.remove("show");
+				document.body.style.overflow = "";
+
+				if (icon) {
+					icon.classList.remove("fa-times");
+					icon.classList.add("fa-bars");
+				}
+			}
+		});
+	});
+
+	// Initialize active menu on page load
+	updateActiveMenu();
+
+	if (mobileMenuBtn && nav) {
+		// Initialize - hide menu on mobile by default
+		if (window.innerWidth <= 768) {
+			nav.style.display = "none";
+		}
+
+		mobileMenuBtn.addEventListener("click", function (e) {
+			e.stopPropagation(); // Prevent event bubbling
+
+			console.log("Menu button clicked");
+			const isMenuOpen =
+				nav.style.display === "flex" || nav.classList.contains("show");
+
+			if (isMenuOpen) {
+				// Close menu
+				nav.style.display = "none";
+				nav.classList.remove("show");
+				document.body.style.overflow = "";
+
+				// Change icon to bars
+				const icon = this.querySelector("i");
+				if (icon) {
+					icon.classList.remove("fa-times");
+					icon.classList.add("fa-bars");
+				}
 			} else {
-				icon.classList.remove("fa-times");
-				icon.classList.add("fa-bars");
+				// Open menu
+				nav.style.display = "flex";
+				nav.classList.add("show");
+				document.body.style.overflow = "hidden";
+
+				// Change icon to times
+				const icon = this.querySelector("i");
+				if (icon) {
+					icon.classList.remove("fa-bars");
+					icon.classList.add("fa-times");
+				}
 			}
 		});
 
@@ -30,24 +115,61 @@ document.addEventListener("DOMContentLoaded", function () {
 			link.addEventListener("click", function () {
 				if (window.innerWidth <= 768) {
 					nav.style.display = "none";
+					nav.classList.remove("show");
+					document.body.style.overflow = "";
+
 					const icon = mobileMenuBtn.querySelector("i");
-					icon.classList.remove("fa-times");
-					icon.classList.add("fa-bars");
+					if (icon) {
+						icon.classList.remove("fa-times");
+						icon.classList.add("fa-bars");
+					}
 				}
 			});
+		});
+
+		// Close mobile menu when clicking outside
+		document.addEventListener("click", function (e) {
+			if (window.innerWidth <= 768) {
+				if (
+					nav.style.display === "flex" &&
+					!nav.contains(e.target) &&
+					!mobileMenuBtn.contains(e.target)
+				) {
+					nav.style.display = "none";
+					nav.classList.remove("show");
+					document.body.style.overflow = "";
+
+					const icon = mobileMenuBtn.querySelector("i");
+					if (icon) {
+						icon.classList.remove("fa-times");
+						icon.classList.add("fa-bars");
+					}
+				}
+			}
 		});
 
 		// Handle window resize
 		window.addEventListener("resize", function () {
 			if (window.innerWidth > 768) {
+				// Show menu on desktop
 				nav.style.display = "flex";
+				nav.classList.remove("show");
+				document.body.style.overflow = "";
+
+				// Reset icon
 				const icon = mobileMenuBtn.querySelector("i");
-				icon.classList.remove("fa-times");
-				icon.classList.add("fa-bars");
+				if (icon) {
+					icon.classList.remove("fa-times");
+					icon.classList.add("fa-bars");
+				}
 			} else {
+				// Hide menu on mobile
 				nav.style.display = "none";
+				nav.classList.remove("show");
 			}
 		});
+	} else {
+		console.error("Mobile menu elements not found");
 	}
 
 	tabBtns.forEach((btn) => {
